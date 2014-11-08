@@ -4,6 +4,9 @@
       ++++ Addison-Wesley ++++
       http://www.haskellcraft.com/craft3e/Home.html
 ############################################################################# -}
+
+module Craft3e.Chapter5 where
+
 import Test.QuickCheck
 
 data ShopItem = ShopItem { name :: String, price :: Int }

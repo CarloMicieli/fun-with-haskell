@@ -5,7 +5,7 @@
       http://www.haskellcraft.com/craft3e/Home.html
 ############################################################################# -}
 
-module Craft3e.Chapter04 where
+module Craft3e.Chapter4 where
 
 import Data.List
 import Test.QuickCheck
@@ -124,7 +124,100 @@ fac n
 fac' :: Integer -> Integer
 fac' = rangeProduct 1
 
+sumFacs :: Integer -> Integer
+sumFacs n = sum $ map (fac) [0..n]
 
+{- Ex 4.19 -}
+mult :: Integer -> Integer -> Integer
+mult _ 0 = 0
+mult 0 _ = 0
+mult m n = fixSign $ mul m (abs n)
+    where mul res 1     = res
+          mul res times = mul (res + m) (times - 1)
+          fixSign res   = if signum n == 1 then res else negate res
+
+mult_prop1 :: Integer -> Integer -> Bool
+mult_prop1 m n = m `mult` n == m * n
+
+{- Ex 4.20: returns the integer square root of a positive integer n -}
+intSquareRoot :: Integer -> Integer
+intSquareRoot n | n < 0 = error "Prelude.intSquareRoot: undefined for negative numbers"
+intSquareRoot n = let squareList = [(x, x * x) | x <- [n, (n - 1)..1] , x * x <= n]
+                   in fst $ head $ squareList
+
+intSquareRoot' :: Integer -> Integer
+intSquareRoot' n = root 1
+    where root r = let sq = (r + 1) * (r + 1)
+                    in if sq > n then r
+                       else           root (r + 1)
+
+intSquareRoot_prop1 :: (Positive Integer) -> Bool
+intSquareRoot_prop1 (Positive n) = intSquareRoot n == intSquareRoot' n
+
+{- Ex 4.21: it finds the maximum of the values f 0, f 1, ... , f n -}
+maxValue :: (Integer -> Integer) -> Integer -> Integer
+maxValue f 0 = f 0
+maxValue f n = findMax (f n) (n - 1)
+    where findMax max' 0 = max max' (f 0)
+          findMax max' x = findMax (max max' (f x)) (x - 1)
+
+f :: Integer -> Integer
+f 0 = 0
+f 1 = 44
+f 2 = 17
+f 3 = 42
+f _ = -1
+
+g :: Integer -> Integer
+g x = x + 1
+
+{-
+  Ex 4.22: given a function f of type Integer -> Integer give a recursive
+  definition of a function of type Integer -> Bool which on input n returns
+  True if one or more of the values f 0, f 1, ..., f n is zero or False
+  otherwise.
+-}
+withZero :: (Integer -> Integer) -> Integer -> Bool
+withZero f 0 = f 0 == 0
+withZero f n = findZero (yieldZero f n) (n - 1)
+    where yieldZero f i = f i == 0
+          findZero True _ = True
+          findZero _    x = let isZeroAtX = yieldZero f x
+                             in if x == 0 then isZeroAtX
+                                else           findZero isZeroAtX (x - 1)
+
+fib :: Integer -> Integer
+fib n
+    | n == 0      = 0
+    | n == 1      = 1
+    | n > 1       = fib (n - 2) + fib (n - 1)
+
+fib' :: Integer -> Integer
+fib' 0 = 0
+fib' n = fibIter n (0, 1)
+    where fibIter 0 (val, _)       = val
+          fibIter i (val, nextVal) = fibIter (i - 1) (nextVal, val + nextVal)
+
+remainder :: Integer -> Integer -> Integer
+remainder m n
+    | m < n     = m
+    | otherwise = remainder (m - n) n
+
+divide :: Integer -> Integer -> Integer
+divide m n
+    | m < n     = 0
+    | otherwise = 1 + divide (m - n) n
+
+divide' :: Integer -> Integer -> Integer
+divide' m n = div 0 m
+    where div res rem | rem < n   = res
+                      | otherwise = div (res + 1) (rem - n)
+
+{- Ex 4.31 -}
+hcf :: Integer -> Integer -> Integer
+hcf = undefined
+
+{- Ex 4.32 -}
 power2 :: Integer -> Integer
 power2 n   | n < 0 = error "Prelude.power2: undefined for negative numbers"
 power2 0   = 1
@@ -137,6 +230,3 @@ power2 n
 
 power2_prop1 :: (Positive Integer) -> Bool
 power2_prop1 (Positive n) = power2 n == 2 ^ n
-
-sumFacs :: Integer -> Integer
-sumFacs n = sum $ map (fac) [0..n]
