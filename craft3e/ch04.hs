@@ -9,6 +9,7 @@ module Craft3e.Chapter4 where
 
 import Data.List
 import Test.QuickCheck
+import Test.HUnit
 
 xs :: [Integer]
 xs = [42, 34, 23, 15, 88]
@@ -215,7 +216,22 @@ divide' m n = div 0 m
 
 {- Ex 4.31 -}
 hcf :: Integer -> Integer -> Integer
-hcf = undefined
+hcf m n = fst $ head $ [(x, y) | x <- factors m , y <- factors n , x == y]
+  where factors x = [x' | x' <- [x, (x-1)..1] , x `mod` x' == 0]
+
+highestComFactor_prop :: (Positive Integer) -> (Positive Integer) -> Bool
+highestComFactor_prop (Positive m) (Positive n) = let val = hcf m n
+                                                   in m `mod` val == 0 &&
+                                                      n `mod` val == 0
+
+hcf' :: Integer -> Integer -> Integer
+hcf' m n = commonFactor n
+  where commonFactor 1 = 1
+        commonFactor y = if m `mod` y == 0 && n `mod` y == 0 then y
+                         else commonFactor (y - 1)
+
+highestComFactor_prop2 :: (Positive Integer) -> (Positive Integer) -> Bool
+highestComFactor_prop2 (Positive m) (Positive n) = hcf m n == hcf' m n
 
 {- Ex 4.32 -}
 power2 :: Integer -> Integer
@@ -230,3 +246,34 @@ power2 n
 
 power2_prop1 :: (Positive Integer) -> Bool
 power2_prop1 (Positive n) = power2 n == 2 ^ n
+
+{- Ex 4.33 -}
+allEqual :: Integer -> Integer -> Integer -> Bool
+allEqual m n p = m == n && n == p
+
+allEqual_prop1 :: Integer -> Bool
+allEqual_prop1 m = allEqual m m m
+
+allEqual_prop2 :: Integer -> Integer -> Property
+allEqual_prop2 m n = (m /= n) ==> allEqual m m n == False &&
+                                  allEqual m n m == False &&
+                                  allEqual n m m == False
+
+allEqual_prop3 :: Integer -> Integer -> Integer -> Property
+allEqual_prop3 m n p = (m /= n || n /= p) ==> allEqual m n p == False
+
+allEqual_test1 = TestCase (assertEqual "allEqual 1 2 3: " False (allEqual 1 2 3))
+allEqual_test2 = TestCase (assertEqual "allEqual 3 1 3: " False (allEqual 3 1 3))
+allEqual_test3 = TestCase (assertEqual "allEqual 3 3 3: " True  (allEqual 3 3 3))
+allEqual_tests = TestList [ allEqual_test1
+                          , allEqual_test2
+                          , allEqual_test3]
+
+allDifferent :: Integer -> Integer -> Integer -> Bool
+allDifferent m n p = m /= n && n /= p && m /= p
+
+allDifferent_prop1 :: Integer -> Bool
+allDifferent_prop1 m = allDifferent m m m == False
+
+allDifferent_prop2 :: Integer -> Integer -> Bool
+allDifferent_prop2 m n = allDifferent m n m == False && allDifferent n m n == False
