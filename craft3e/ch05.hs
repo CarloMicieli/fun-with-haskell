@@ -7,6 +7,7 @@
 
 module Craft3e.Chapter5 where
 
+import Data.Char
 import Test.QuickCheck
 
 data ShopItem = ShopItem { name :: String, price :: Int }
@@ -51,7 +52,7 @@ fastFib n = fibIter n (0, 1)
 fib_prop n = n >= 0 && n < 20 ==> fib n == fastFib n
 
 {-
-  It returns the maximum of two integers, together with the number
+  Ex 5.1 it returns the maximum of two integers, together with the number
   of times it occurs.
 -}
 maxOccurs :: Integer -> Integer -> (Integer,Integer)
@@ -79,7 +80,7 @@ maxThreeOccurs_maxOccProp m n p = let (max, occ) = maxThreeOccurs m n p
           count max x = if x == max then 1 else 0
 
 {-
-  It puts the element of a triple of three integers into ascending order.
+  Ex 5.2 it puts the element of a triple of three integers into ascending order.
 -}
 orderTriple :: (Integer,Integer,Integer) -> (Integer,Integer,Integer)
 orderTriple (m, n, p) = let (max, (x, y)) = maxThree m n p
@@ -109,3 +110,58 @@ area (Rectangle h w) = h * w
 perimeter :: Shape -> Float
 perimeter (Circle r)      = 2 * pi * r
 perimeter (Rectangle h w) = 2 * (h + w)
+
+type Name = String
+type Age  = Int
+data People = Person Name Age
+  deriving (Eq, Show)
+
+showPerson :: People -> String
+showPerson (Person n a) = "Person(name = " ++ n ++ ", age = " ++ show a ++ ")"
+
+{- Ex 5.18 -}
+doubleAll :: [Integer] -> [Integer]
+doubleAll xs = [2 * x | x <- xs]
+
+{- Ex 5.19 -}
+capitalize :: String -> String
+capitalize cs = [changeCase c | c <- cs]
+  where changeCase ch = if isLower ch then toUpper ch else ch
+
+capitalizeLetters :: String -> String
+capitalizeLetters cs = [changeCase c | c <- cs , isAlpha c]
+  where changeCase ch = if isLower ch then toUpper ch else ch
+
+capitalize_prop1 :: String -> Bool
+capitalize_prop1 str = let out = capitalize str
+                        in allCapitals out
+                     where allCapitals xs = all isUpper $
+                                            filter isAlpha $
+                                            filter isAscii xs
+
+{- Ex 5.20 -}
+divisors :: Integer -> [Integer]
+divisors n = [d | d <- [1..n] , n `mod` d == 0]
+
+divisors_prop :: Integer -> Bool
+divisors_prop n = let divs = divisors n
+                   in all isDivisible divs
+                where isDivisible x = n `mod` x == 0
+
+{- Ex 5.21 -}
+matches :: Integer -> [Integer] -> [Integer]
+matches _ [] = []
+matches x' (x:xs)
+  | x == x'    = x : matches x' xs
+  | otherwise  = matches x' xs
+
+matches' :: Integer -> [Integer] -> [Integer]
+matches' x xs = [el | el <- xs , el == x]
+
+{- Ex 5.22 -}
+mkString :: [String] -> String
+mkString [] = ""
+mkString (x:xs) = x ++ "\n" ++ (mkString xs)
+
+onSeparateLines :: [String] -> String
+onSeparateLines xs = mkString xs
