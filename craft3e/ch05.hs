@@ -47,7 +47,7 @@ fastFib :: Integer -> Integer
 fastFib n | n < 0 = error "Prelude.fib': undefined for negative values"
 fastFib n = fibIter n (0, 1)
   where fibIter 0 (fib1, fib2) = fib1
-        fibIter n (fib1, fib2) = fibIter (n - 1) (fib2, fib1+fib2)
+        fibIter n (fib1, fib2) = fibIter (n - 1) (fib2, fib1 + fib2)
 
 fib_prop n = n >= 0 && n < 20 ==> fib n == fastFib n
 
@@ -165,3 +165,30 @@ mkString (x:xs) = x ++ "\n" ++ (mkString xs)
 
 onSeparateLines :: [String] -> String
 onSeparateLines xs = mkString xs
+
+{-
+  Ex 5.23: takes a string and an integer n. The result is n copies of the
+  string joined together. If n <= 0, the result should be "".
+-}
+duplicate :: String -> Integer -> String
+duplicate _   n | n <= 0 = ""
+duplicate str n = str ++ duplicate str (n - 1)
+
+{- Ex 5.24 -}
+pushRight :: String -> String
+pushRight str = let linelength = 12
+                 in padRight (linelength - length str) ++ str
+              where padRight sp | sp <= 0   = ""
+                                | otherwise = ' ' : padRight (sp - 1)
+
+padRight :: Int -> String -> String
+padRight spaces str | length str >= spaces = str
+                    | spaces == 0          = str
+                    | otherwise            = ' ' : padRight (spaces - 1) str
+
+{- Ex 5.26 -}
+fibTable :: Integer -> String
+fibTable n = header ++ "\n" ++ (onSeparateLines $ map printFib [(x, fastFib x) | x <- [0..n]])
+  where printFib (x, fibx) = (padNum) 3 x ++ (padNum 12 fibx)
+        header             = " n " ++ padRight 12 "fib n"
+        padNum sp n        = padRight sp (show n)
