@@ -113,3 +113,30 @@ addBarCode []              barCode (name,price) = [(barCode,name,price)]
 addBarCode (x@(bc,_,_):xs) barCode (name,price) =
     if bc == barCode then addBarCode xs barCode (name,price)
     else x : addBarCode xs barCode (name,price)
+
+
+{- Ex 6.53 -}
+data Suit = Spades | Hearts | Diamonds | Clubs
+  deriving (Show, Read, Eq, Enum)
+
+data Value = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten |
+             Jack | Queen | King | Ace
+  deriving (Show, Read, Eq, Enum)
+
+data Player = East | South | West | North
+  deriving (Read, Eq, Enum)
+
+instance Show Player where
+  show East  = "E"
+  show West  = "W"
+  show North = "N"
+  show South = "S"
+
+data Trick = Trick Player Suit
+  deriving (Eq)
+
+suit :: Trick -> Suit
+suit (Trick _ s) = s
+
+lead :: Trick -> Player
+lead (Trick pl _) = pl
