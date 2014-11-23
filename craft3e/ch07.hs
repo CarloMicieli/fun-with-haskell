@@ -337,3 +337,12 @@ wc cs = (length chars, length words, length lines)
   where lines = fill $ dropSpace cs
         words = concat [words | words <- lines]
         chars = concat [ch    | ch    <- words]
+
+{- Ex 7.11 -}
+isPalin :: String -> Bool
+isPalin s = let str = [c | c <- s , isLetter c] in compare str (reverse str)
+  where compare "" ""         = True
+        compare (a:as) (b:bs) = if compCh a b
+                                then True && compare as bs
+                                else False
+        compCh m n = toUpper m == toUpper n
