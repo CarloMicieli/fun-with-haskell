@@ -10,10 +10,10 @@ module Craft3e.Chapter7 where
 import Test.QuickCheck
 import Data.Char
 import Prelude hiding ( product
-                      , elem
                       , and
                       , or
                       , concat
+                      , getLine
                       , (++))
 
 numbers :: [Integer]
@@ -80,10 +80,10 @@ concat :: [[a]] -> [a]
 concat []       = []
 concat (xs:xss) = xs ++ concat xss
 
-elem :: Integer -> [Integer] -> Bool
-elem _ []      = False
-elem x' (x:xs) | x == x' = True
-               | otherwise = elem x' xs
+elem' :: Integer -> [Integer] -> Bool
+elem' _ []      = False
+elem' x' (x:xs) | x == x' = True
+                | otherwise = elem' x' xs
 
 doubleAll :: [Integer] -> [Integer]
 doubleAll []     = []
@@ -229,3 +229,111 @@ qSort' :: [Integer] -> [Integer]
 qSort' []         = []
 qSort' (pivot:xs) = let (l, r) = partition (<= pivot) xs
                      in (qSort' r) ++ [pivot] ++ (qSort' l)
+
+qSort'' :: [Integer] -> [Integer]
+qSort'' [] = []
+qSort'' (pivot:xs) = (qSort'' l) ++ [pivot] ++ (qSort'' r)
+  where l = [x | x <- xs , x < pivot]
+        r = [x | x <- xs , x > pivot]
+
+{- Ex 7.25 -}
+sublist :: Eq a => [a] -> [a] -> Bool
+sublist []      _     = True
+sublist _       []    = False
+sublist (x:xs) (y:ys) = if (x == y)
+                        then sublist xs ys
+                        else sublist (x:xs) ys
+
+subseq :: Eq a => [a] -> [a] -> Bool
+subseq [] _  = True
+subseq _  [] = False
+subseq xs ys = find xs ys False
+  where find  _      []    found = found
+        find  []     _     found = found
+        find (h:hs) (s:ss) found = if (h == s)
+                                   then find hs ss True
+                                   else find xs ss False
+
+
+{- Example: text processing -}
+whitespace :: [Char]
+whitespace = ['\n', '\t', ' ']
+
+isWhitespace :: Char -> Bool
+isWhitespace = \ch -> elem ch whitespace
+
+getWord :: String -> String
+getWord []     = []
+getWord (c:cs) = if isWhitespace c
+                 then ""
+                 else c : getWord cs
+
+dropWord :: String -> String
+dropWord []     = []
+dropWord (c:cs) = if isWhitespace c
+                  then c : cs
+                  else dropWord cs
+
+dropSpace :: String -> String
+dropSpace []     = []
+dropSpace (c:cs) | isWhitespace c = dropSpace cs
+                 | otherwise      = c : cs
+
+type Word = String
+type Line = [Word]
+
+splitWords :: String -> [Word]
+splitWords "" = []
+splitWords xs = let str = dropSpace xs
+                 in (getWord str) : splitWords (dropSpace $ dropWord str)
+
+getLine :: Int -> [Word] -> Line
+getLine _   []     = []
+getLine 0   _      = []
+getLine len (w:ws) = let wordLength = length w
+                         remaining = len - wordLength
+                      in if remaining <= 0
+                         then []
+                         else w : getLine remaining ws
+
+{- Ex 7.27 -}
+dropLine :: Int -> [Word] -> Line
+dropLine _    []    = []
+dropLine 0    ws    = ws
+dropLine len (w:ws) = let wordLength = length w
+                          remaining = len - wordLength
+                       in if remaining > 0
+                          then dropLine remaining ws
+                          else w: ws
+
+lineLen :: Int
+lineLen = 20
+
+oneRing :: String
+oneRing = "One Ring to rule them all, One Ring to find them, " ++
+  "One Ring to bring them all and in the darkness bind them"
+
+splitLines :: [Word] -> [Line]
+splitLines [] = []
+splitLines ws = (getLine lineLen ws) : splitLines (dropLine lineLen ws)
+
+fill :: String -> [Line]
+fill = splitLines . splitWords
+
+{- Ex 7.28 -}
+joinLine :: Line -> String
+joinLine []     = ""
+joinLine (w:ws) = w ++ " " ++ joinLine ws
+
+{- Ex 7.29 -}
+joinLines :: [Line] -> String
+joinLines []     = ""
+joinLines (l:ls) = (joinLine l) ++ joinLines ls
+
+{- Ex 7.32: returns the number of characters, words and lines -}
+wc :: String -> (Int,Int,Int)
+wc [] = (0, 0, 0)
+wc cs = (length chars, length words, length lines)
+  where lines = fill $ dropSpace cs
+        words = concat [words | words <- lines]
+        chars = concat [ch    | ch    <- words]
