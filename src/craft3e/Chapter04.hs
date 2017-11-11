@@ -5,7 +5,7 @@
       http://www.haskellcraft.com/craft3e/Home.html
 ############################################################################# -}
 
-module Craft3e.Chapter4 where
+module Craft3e.Chapter04 where
 
 import Data.List
 import Test.QuickCheck
@@ -47,7 +47,6 @@ between_prop1 v m n = between v m n == between' v m n
 {-
   Returns 'True' exactly when m, n  and p are in weak ascending order
   that is the sequence does not go down at any point.
-
   weakAscOrder 2 3 3 ~~> True
 -}
 weakAscOrder :: (Ord a) => a -> a -> a -> Bool
@@ -144,13 +143,13 @@ mult_prop1 m n = m `mult` n == m * n
 intSquareRoot :: Integer -> Integer
 intSquareRoot n | n < 0 = error "Prelude.intSquareRoot: undefined for negative numbers"
 intSquareRoot n = let squareList = [(x, x * x) | x <- [n, (n - 1)..1] , x * x <= n]
-                   in fst $ head $ squareList
+                    in fst $ head $ squareList
 
 intSquareRoot' :: Integer -> Integer
 intSquareRoot' n = root 1
     where root r = let sq = (r + 1) * (r + 1)
                     in if sq > n then r
-                       else           root (r + 1)
+                        else           root (r + 1)
 
 intSquareRoot_prop1 :: (Positive Integer) -> Bool
 intSquareRoot_prop1 (Positive n) = intSquareRoot n == intSquareRoot' n
@@ -184,7 +183,7 @@ withZero f n = findZero (yieldZero f n) (n - 1)
     where yieldZero f i = f i == 0
           findZero True _ = True
           findZero _    x = let isZeroAtX = yieldZero f x
-                             in if x == 0 then isZeroAtX
+                              in if x == 0 then isZeroAtX
                                 else           findZero isZeroAtX (x - 1)
 
 fib :: Integer -> Integer
@@ -221,14 +220,14 @@ hcf m n = fst $ head $ [(x, y) | x <- factors m , y <- factors n , x == y]
 
 highestComFactor_prop :: (Positive Integer) -> (Positive Integer) -> Bool
 highestComFactor_prop (Positive m) (Positive n) = let val = hcf m n
-                                                   in m `mod` val == 0 &&
+                                                    in m `mod` val == 0 &&
                                                       n `mod` val == 0
 
 hcf' :: Integer -> Integer -> Integer
 hcf' m n = commonFactor n
   where commonFactor 1 = 1
         commonFactor y = if m `mod` y == 0 && n `mod` y == 0 then y
-                         else commonFactor (y - 1)
+                          else commonFactor (y - 1)
 
 highestComFactor_prop2 :: (Positive Integer) -> (Positive Integer) -> Bool
 highestComFactor_prop2 (Positive m) (Positive n) = hcf m n == hcf' m n

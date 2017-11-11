@@ -6,7 +6,7 @@
 ############################################################################# -}
 
 module Craft3e.Library where
-
+    
 import Data.List
 import Test.QuickCheck
 
@@ -18,10 +18,10 @@ type Database = [Loan]
 
 exampleBase :: Database
 exampleBase = [ ("Alice", "Tintin")
-              , ("Anna" , "Little Women")
-              , ("Alice", "Asterix")
-              , ("Rory" , "Tintin")
-              ]
+                , ("Anna" , "Little Women")
+                , ("Alice", "Asterix")
+                , ("Rory" , "Tintin")
+                ]
 
 hasBook :: Book -> Loan -> Bool
 hasBook b' (p, b) = b == b'
@@ -51,11 +51,11 @@ returnLoan = flip delete
 prop_db1 :: Database -> Person -> Book -> Bool
 prop_db1 dBase pers bk =
     elem bk loanedAfterLoan == True
-         where afterLoan       = makeLoan dBase (pers, bk)
-               loanedAfterLoan = books afterLoan pers
+            where afterLoan       = makeLoan dBase (pers, bk)
+                loanedAfterLoan = books afterLoan pers
 
 prop_db2 :: Database -> Person -> Book -> Bool
 prop_db2 dBase pers bk =
     elem bk loanedAfterReturn == False
-         where afterReturn       = returnLoan dBase (pers, bk)
-               loanedAfterReturn = books afterReturn pers
+            where afterReturn       = returnLoan dBase (pers, bk)
+                loanedAfterReturn = books afterReturn pers

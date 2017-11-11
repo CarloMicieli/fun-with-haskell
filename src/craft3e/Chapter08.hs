@@ -1,9 +1,11 @@
 {- #############################################################################
-Sample code from:
-Simon Thompson - Haskell: the Craft of Functional Programming, 2011
-++++ Addison-Wesley ++++
-http://www.haskellcraft.com/craft3e/Home.html
+   Sample code from:
+      Simon Thompson - Haskell: the Craft of Functional Programming, 2011
+      ++++ Addison-Wesley ++++
+      http://www.haskellcraft.com/craft3e/Home.html
 ############################################################################# -}
+
+module Craft3e.Chapter08 where
 
 helloWorld :: IO ()
 helloWorld = putStrLn "Hello world"
@@ -17,9 +19,9 @@ print2 str = do putStrLn str
 
 print4ln :: String -> IO ()
 print4ln str = do putStrLn str
-                  putStrLn str
-                  putStrLn str
-                  putStrLn str
+                    putStrLn str
+                    putStrLn str
+                    putStrLn str
 
 read2lines :: IO String
 read2lines = do l1 <- getLine
@@ -36,10 +38,10 @@ checkPalin = do l <- getLine
 {- Ex 8.11 -}
 sumNums :: IO Int
 sumNums = do a <- getLine
-             b <- getLine
-             let n1 = read a :: Int
-             let n2 = read b :: Int
-             return (n1 + n2)
+                b <- getLine
+                let n1 = read a :: Int
+                let n2 = read b :: Int
+                return (n1 + n2)
 
 {- Ex 8.12 -}
 putNtimes :: Integer -> String -> IO ()
@@ -49,8 +51,8 @@ loop :: (a -> IO ()) -> Integer -> a -> IO ()
 loop f n s = do if n == 0
                 then return ()
                 else do
-                  (f s)
-                  loop f (n-1) s
+                    (f s)
+                    loop f (n-1) s
 
 {- Ex 8.13 -}
 getInt :: IO Integer
@@ -65,30 +67,30 @@ sums n acc = do num <- getInt
 
 sumNints :: IO ()
 sumNints = do putStr "Please, enter how many numbers: "
-              n <- getInt
-              res <- sums n 0
-              putStrLn $ "Sum = " ++ show res
+                n <- getInt
+                res <- sums n 0
+                putStrLn $ "Sum = " ++ show res
 
 copy :: IO ()
 copy = do line <- getLine
-          putStrLn line
-          copy
+            putStrLn line
+            copy
 
 copyN :: Integer -> IO ()
 copyN 0 = return ()
 copyN n = do line <- getLine
-             putStrLn line
-             copyN (n - 1)
+                putStrLn line
+                copyN (n - 1)
 
 copyEmpty :: IO ()
 copyEmpty = do line <- getLine
-               if null line
-               then return ()
-               else do putStrLn line
-                       copyEmpty
+                if null line
+                then return ()
+                else do putStrLn line
+                        copyEmpty
 
 copyCount :: Integer -> IO ()
 copyCount n = do line <- getLine
-                 if null line
-                 then putStrLn $ "read " ++ show n ++ " line(s)"
-                 else copyCount (n + 1)
+                    if null line
+                    then putStrLn $ "read " ++ show n ++ " line(s)"
+                    else copyCount (n + 1)

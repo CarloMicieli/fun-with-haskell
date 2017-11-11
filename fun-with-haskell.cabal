@@ -1,0 +1,41 @@
+name:                fun-with-haskell
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/CarloMicieli/fun-with-haskell#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Carlo Micieli
+maintainer:          carlo.micieli@gmail.com
+copyright:           2017 Carlo Micieli
+category:            Web
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Lib
+  build-depends:       base >= 4.7 && < 5
+  default-language:    Haskell2010
+
+executable fun-with-haskell-exe
+  hs-source-dirs:      app
+  main-is:             Main.hs
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       base
+                     , fun-with-haskell
+  default-language:    Haskell2010
+
+test-suite fun-with-haskell-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  build-depends:       base
+                     , fun-with-haskell
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/CarloMicieli/fun-with-haskell

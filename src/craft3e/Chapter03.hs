@@ -5,7 +5,7 @@
       http://www.haskellcraft.com/craft3e/Home.html
 ############################################################################# -}
 
-module Craft3e.Chapter3 where
+module Craft3e.Chapter03 where
 
 -- |The AND operator
 andAlso :: Bool -> Bool -> Bool

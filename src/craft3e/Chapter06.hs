@@ -5,8 +5,8 @@
       http://www.haskellcraft.com/craft3e/Home.html
 ############################################################################# -}
 
-module Craft3e.Chapter6 where
-
+module Craft3e.Chapter06 where
+    
 import Prelude hiding (lookup)
 
 type Name    = String
@@ -35,23 +35,23 @@ barcodes = [1234, 4719, 3814, 1112, 1113, 1234]
 
 bill :: BillType
 bill = [ ("Dry Sherry, 1lt",     540)
-       , ("Nappies"     ,       1010)
-       , ("Orange Jelly",         56)
-       , ("Dry Sherry, 1lt",     540) ]
+        , ("Nappies"     ,       1010)
+        , ("Orange Jelly",         56)
+        , ("Dry Sherry, 1lt",     540) ]
 
 {- Ex 6.39 -}
 formatPence :: Price -> String
 formatPence p = let pounds = p `div` 100
                     pence  = p `mod` 100
-                 in fmtPounds pounds ++ "." ++ fmtPence pence
+                    in fmtPounds pounds ++ "." ++ fmtPence pence
             where fmtPounds x = show x
-                  fmtPence  x = if x < 10 then '0' : show x
+                    fmtPence  x = if x < 10 then '0' : show x
                                 else                 show x
 
 {- Ex 6.40 -}
 formatLine :: (Name,Price) -> String
 formatLine (name, price) = let priceStr = formatPence price
-                               len = lineLength - length name - length priceStr
+                                len = lineLength - length name - length priceStr
                             in name ++ (replicate len '.') ++ priceStr ++ "\n"
 {- Ex 6.41 -}
 formatLines :: [(Name,Price)] -> String
@@ -60,7 +60,7 @@ formatLines lines = concat $ map formatLine lines
 {- Ex 6.42 -}
 makeTotal :: BillType -> Price
 makeTotal bill = let disc = makeDiscount bill
-                  in sum [price | (_,price) <- bill] - disc
+                    in sum [price | (_,price) <- bill] - disc
 
 {- Ex 6.43 -}
 formatTotal :: Price -> String
@@ -72,15 +72,15 @@ storeHead = "Haskell Stores"
 
 formatBill :: BillType -> String
 formatBill bill = let len = (lineLength - length storeHead) `div` 2
-                      header = (replicate len ' ') ++ storeHead ++ "\n\n"
-                      discount = formatDiscount $ makeDiscount bill
-                      footer = formatTotal $ makeTotal bill
-                   in header ++ formatLines bill ++ discount ++ footer
+                        header = (replicate len ' ') ++ storeHead ++ "\n\n"
+                        discount = formatDiscount $ makeDiscount bill
+                        footer = formatTotal $ makeTotal bill
+                    in header ++ formatLines bill ++ discount ++ footer
 
 {- Ex 6.45 -}
 look :: Database -> BarCode -> (Name,Price)
 look dBase bc = let results = [(n,p) | (b,n,p) <- dBase , b == bc]
-                 in if null results then ("Unknown item", 0)
+                    in if null results then ("Unknown item", 0)
                     else                 head results
 
 {- Ex 6.46 -}
@@ -101,7 +101,7 @@ printBill = putStr $ produceBill barcodes
 makeDiscount :: BillType -> Price
 makeDiscount bill = if applyDiscount then 100 else 0
     where applyDiscount = buyOfSherryCount > 1
-          buyOfSherryCount = sum [1 | (n,_) <- bill , n == "Dry Sherry, 1lt"]
+            buyOfSherryCount = sum [1 | (n,_) <- bill , n == "Dry Sherry, 1lt"]
 
 formatDiscount :: Price -> String
 formatDiscount 0    = ""
@@ -117,23 +117,23 @@ addBarCode (x@(bc,_,_):xs) barCode (name,price) =
 
 {- Ex 6.53 -}
 data Suit = Spades | Hearts | Diamonds | Clubs
-  deriving (Show, Read, Eq, Enum)
+    deriving (Show, Read, Eq, Enum)
 
 data Value = Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten |
-             Jack | Queen | King | Ace
-  deriving (Show, Read, Eq, Enum)
+                Jack | Queen | King | Ace
+    deriving (Show, Read, Eq, Enum)
 
 data Player = East | South | West | North
-  deriving (Read, Eq, Enum)
+    deriving (Read, Eq, Enum)
 
 instance Show Player where
-  show East  = "E"
-  show West  = "W"
-  show North = "N"
-  show South = "S"
+    show East  = "E"
+    show West  = "W"
+    show North = "N"
+    show South = "S"
 
 data Trick = Trick Player Suit
-  deriving (Eq)
+    deriving (Eq)
 
 suit :: Trick -> Suit
 suit (Trick _ s) = s
